@@ -37,7 +37,7 @@ Tiger& Tiger::operator=(const Tiger& old_tiger) {
 
 // Tiger destructor
 Tiger::~Tiger() {
-    cout << "Tiger destructor called " << endl;
+    // cout << "Tiger destructor called " << endl;
 }
 
 // Getter for sick cost of tiger

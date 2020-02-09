@@ -303,27 +303,46 @@ void Zoo::random_event() {
         cout << "No animals in zoo, therefore no event possible" << endl;
         return;
     }
-    int event_num = rand() % 4;
+    int event_num = rand() % 8;
     switch(event_num) {
         case 0:
-            cout << "No event occurred this turn" << endl;
+            if(feed_type == 0 || feed_type == 1)
+                cout << "No event occurred this turn" << endl;
+            else if(feed_type == 2)
+                sick_event();
             break;
         case 1:
-            cout << "Sick event" << endl;
-            sick_event();
+            if(feed_type == 0 || feed_type == 1)
+                cout << "No event occurred this turn" << endl;
+            else if(feed_type == 2)
+                sick_event();
             break;
         case 2:
-            cout << "Birth event" << endl;
-            birth_event();
+            sick_event();
             break;
         case 3:
-            cout << "Boom event" << endl;
+            if(feed_type == 0 || feed_type == 2)
+                sick_event();
+            else if(feed_type == 1)
+                cout << "No event occurred this turn" << endl;
+            break;
+        case 4:
+            birth_event();
+            break;
+        case 5:
+            birth_event();
+            break;
+        case 6:
+            boom_event();
+            break;
+        case 7:
             boom_event();
     }
 }
 
 // If player has enough money to pay for sick animal, pay, else animal dies
 void Zoo::sick_event() {
+    cout << "Sick event:" << endl;
     int type_of_animal;
     int index_of_animal;
     get_random_index_or_type(&type_of_animal, &index_of_animal);
@@ -335,28 +354,42 @@ void Zoo::sick_event() {
             if(money > sick_cost) {
                 money -= sick_cost;
                 spent += sick_cost;
-                cout << "A sealion got sick, paid " << sick_cost << " to help it recover" << endl;
+                cout << "\tA sealion got sick, paid " << sick_cost << " to help it recover" << endl;
             }
-            else
+            else {
                 remove_sealion(index_of_animal);
+                cout << "\tA sealion got sick and you didn't have enough money to heal it. It dies." << endl;
+            }
+
             break;
         }
         case 1:
         {
             int sick_cost = tigers[index_of_animal].get_sick_cost();
-            if(money > sick_cost)
+            if(money > sick_cost) {
                 money -= sick_cost;
-            else
+                spent += sick_cost;
+                cout << "\tA tiger got sick, paid " << sick_cost << " to help it recover" << endl;
+            }
+            else {
                 remove_tiger(index_of_animal);
+                cout << "\tA tiger got sick and you didn't have enough money to heal it. It dies." << endl;
+            }
             break;
         }
         case 2:
         {
             int sick_cost = bears[index_of_animal].get_sick_cost();
-            if(money > sick_cost)
+            if(money > sick_cost) {
                 money -= sick_cost;
-            else
+                spent += sick_cost;
+                cout << "\tA bear got sick, paid " << sick_cost << " to help it recover" << endl;
+            }
+            else {
                 remove_bear(index_of_animal);
+                cout << "A bear got sick and you didn't have enough money to heal it. It dies." << endl;
+            }
+
         }
     }
 }
@@ -386,6 +419,7 @@ void Zoo::get_random_index_or_type(int *type, int *index) const {
 
 // If player has at least one type of animal with two adults, birth occurs randomly
 void Zoo::birth_event() {
+    cout << "Birth event:" << endl;
     if(!birth_possible())
         return;
 
@@ -415,7 +449,7 @@ bool Zoo::birth_possible() const {
         return true;
     else if(get_num_adult_bears() >= 2)
         return true;
-    cout << "Birth event not possible, not enough adult animals of same species (minimum 2)" << endl;
+    cout << "\tBirth event not possible, not enough adult animals of same species (minimum 2)" << endl;
     return false;
 }
 
@@ -444,9 +478,12 @@ int Zoo::get_birth_type() const {
 // Gives sealions bonus revenue for one turn
 void Zoo::boom_event() {
     srand(time(NULL));
+    cout << "Boom event:" << endl;
+    if(num_sealions == 0)
+        cout << "\tNo sealions owned, so no revenue bonus" << endl;
     for(int i = 0; i < num_sealions; i++) {
         int bonus = (rand() % 250) + 150;
-        cout << "One sealion gets a bonus " << bonus << " revenue this turn" << endl;
+        cout << "\tOne sealion gets a bonus " << bonus << " revenue this turn" << endl;
         money += bonus;
         revenue += bonus;
     }
@@ -557,7 +594,7 @@ void Zoo::get_feed_type() {
     string feed_type_str = "";
     while(feed_type_str != "0" && feed_type_str != "1" && feed_type_str != "2") {
         cout << "What type of feed would you like to purchase?" << endl;
-        cout << "Regular (0) $" << feeding_cost << ", premium (1) $" << feeding_cost * 2;
+        cout << "\tRegular (0) $" << feeding_cost << ", premium (1) $" << feeding_cost * 2;
         cout << ", or cheap (2) $" << feeding_cost/2 << ": ";
         getline(cin, feed_type_str);
     }
