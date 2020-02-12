@@ -26,6 +26,10 @@ int main() {
         zoo.pay_feeding_cost();
         cout << endl << zoo << endl;
         zoo.end_turn();
+	if(zoo.get_money() < 700 && zoo.get_num_animals() == 0) {
+		cout << "You have no animals and not enough money to buy any. Game over." << endl;
+		return 0;
+	}		
     }
     cout << "You went bankrupt, game over." << endl;
     return 0;

@@ -12,7 +12,7 @@ using namespace std;
 // Zoo default constructor
 Zoo::Zoo() {
     // cout << "Zoo default constructor called" << endl;
-    money = 100000;
+    money = 1000;
     feeding_cost = 80;
     feed_type = 0;
     revenue = 0;
